@@ -11,8 +11,9 @@ class UsersController extends Controller
     public function getAllUsers()
     {
         try {
-            $users = User::latest()->get();
-
+            $user_id = User::latest()->get();
+            $users= User::find($user_id);
+            $users = User::with('roles')->get();
             if (count($users) > 0) {
                 return response()->json([
                     'Users' => $users,
@@ -29,6 +30,7 @@ class UsersController extends Controller
                 ], 401);
             }
         } catch (\Exception $ex) {
+            return $ex->getMessage();
             return response([
                 'status' => false,
                 'stateNum' => 401,
@@ -66,25 +68,20 @@ class UsersController extends Controller
     {
         try {
             $this->validate($request, [
-                'fullName' => 'required',
-                'email' => 'bail|required|email|unique:users',
-                'password' => 'bail|required|min:8',
-                'userType' => 'required',
-                // 'role_id' => 'required'
+                'fullName' => 'required|string',
+                'email' => 'required|email|unique:users',
+                'password' => 'alpha_num|bail|required|min:8',
+                'role' => 'required',
+                'permissions' => 'required'
             ]);
-            $password = Hash::make($request->password);
-            $fullName = request()->fullName;
-            $email = request()->email;
-            $password = $password;
-            $userType = request()->userType;
-            // $role_id = request()->role_id;
             $user = new User;
-            $user->fullName = $fullName;
-            $user->email = $email;
-            $user->password = $password;
-            $user->userType = $userType;
-            // $user->role_id = $role_id;
-            // $user->roles()->sync($request->role);
+            $user->fullName = request()->fullName;
+            $user->email = request()->email;
+            $user->password = Hash::make($request->password);
+            $user->assignRole($request->role);
+            if($request->has('permissions')){
+                $user->givePermissionTo($request->permissions);
+            }
             $user->save();
 
             return response([
@@ -94,6 +91,7 @@ class UsersController extends Controller
                 'message' => 'done'
             ], 200);
         } catch (\Exception $ex) {
+            return $ex->getMessage();
             return response([
                 'status' => false,
                 'stateNum' => 401,
@@ -106,20 +104,33 @@ class UsersController extends Controller
     {
         try {
             $this->validate($request, [
-                'fullName' => 'required',
-                'email' => 'bail|required|email|unique:users',
-                'password' => 'required|min:8',
-                'userType' => 'required'
+                'fullName' => 'required|string',
+                'email' => 'required|email|unique:users,email,'.$id,
+                'password' => 'alpha_num|bail|required|min:8',
+                'role' => 'required',
+                'permissions' => 'required'
             ]);
-            $user = User::find($id);
+            $user = User::findOrFail($id);
             if (isset($user)) {
-                $user->update([
-                    'password' => Hash::make($request->password),
-                    'fullName' => $request->fullName,
-                    'email' => $request->email,
-                    'userType' => $request->userType,
-                    // 'role_id' => $request->role_id,
-                ]);
+                $user->fullName = $request->fullName;
+                $user->email = $request->email;
+                if($request->has('password')){
+                    $user->password = Hash::make($request->password);
+                }
+                if($request->has('role')){
+                    $userRole = $user->getRoleNames();
+                    foreach($userRole as $role){
+                        $user->removeRole($role);
+                    }
+                    $user->assignRole($request->role);
+                }
+                if($request->has('permissions')){
+                    $userPermissions = $user->getPermissionNames();
+                    foreach($userPermissions as $permission){
+                        $user->revokePermissionTo($permission);
+                    }
+                    $user->givePermissionTo($request->permissions);
+                }
                 return response([
                     'User' => $user,
                     'status' => true,
@@ -132,6 +143,7 @@ class UsersController extends Controller
                 ], 401);
             }
         } catch (\Exception $ex) {
+            return $ex->getMessage();
             return response([
                 'status' => false,
                 'stateNum' => 401,

@@ -17,19 +17,19 @@ class AuthController extends Controller
         try {
             $request->validate([
                 'fullName' => 'required|string',
-                'email' => 'required|string|unique:users',
-                'password' => 'required|string|min:6',
-                'userType' => 'required|string',
+                'email' => 'required|email|unique:users',
+                'password' => 'alpha_num|bail|required|min:8',
+                'role' => 'required',
+                'permissions' => 'required'
             ]);
-            $fullName = request()->fullName;
-            $email = request()->email;
-            $password = Hash::make($request->input('password'));
-            $userType = request()->userType;
             $user = new User;
-            $user->fullName = $fullName;
-            $user->email = $email;
-            $user->password = $password;
-            $user->userType = $userType;
+            $user->fullName = request()->fullName;
+            $user->email = request()->email;
+            $user->password = Hash::make($request->password);
+            $user->assignRole($request->role);
+            if($request->has('permissions')){
+                $user->givePermissionTo($request->permissions);
+            }
             $user->save();
             return response([
                 'User' => $user,

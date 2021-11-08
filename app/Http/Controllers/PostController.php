@@ -138,12 +138,4 @@ class PostController extends Controller
             ], 400);
         }
     }
-//     public function __construct()
-// {
-//     $this->middleware('auth:sanctum')->only('show');
-//     $this->middleware('can:show,App\Models\Post')->only('show');
-//     $this->middleware('can:store,App\Models\Post')->only('store');
-//     $this->middleware('can:update,App\Models\Post')->only('update');
-//     $this->middleware('can:delete,App\Models\Post')->only('delete');
-// }
 }

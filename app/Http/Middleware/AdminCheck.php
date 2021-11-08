@@ -24,28 +24,28 @@ class AdminCheck
                  'msg' => 'You are not allowed to access this route'
              ],402);
         }
-        $user = Auth::user();
-        if($user->role->isAdmin == 0){
-            return response()->json([
-                'msg' => 'You are not allowed to access this route'
-            ],402); 
-        }
+        // $user = Auth::user();
+        // if($user->role->isAdmin == 0){
+        //     return response()->json([
+        //         'msg' => 'You are not allowed to access this route'
+        //     ],402); 
+        // }
 
-        return $this->checkForPermission($user,$request);
+        // return $this->checkForPermission($user,$request);
 
         
         return $next($request);
 
     }
-    public function checkForPermission($user,$request){
-        $permission = json_decode($user->role->permission);
-        $hasPermission = false;
-            foreach($permission as $p){
-            if($p->name==$request->path()){
-                if($p->read){
-                    $hasPermission = true;
-                }
-            }
-        }
-    }
+    // public function checkForPermission($user,$request){
+    //     $permission = json_decode($user->role->permission);
+    //     $hasPermission = false;
+    //         foreach($permission as $p){
+    //         if($p->name==$request->path()){
+    //             if($p->read){
+    //                 $hasPermission = true;
+    //             }
+    //         }
+    //     }
+    // }
 }
