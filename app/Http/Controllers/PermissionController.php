@@ -77,10 +77,6 @@ class PermissionController extends Controller
             $permission = $this->permission->create([
                 'name' => $request->name
             ]);
-            // $name = request()->name;
-            // $permission = new Permission;
-            // $permission->name = $name;
-            // $permission->save();
             return response([
                 'Permission' => $permission,
                 'status' => true,
@@ -95,14 +91,13 @@ class PermissionController extends Controller
             ], 400);
         }
     }
-    public function updatePermission($id)
+    public function updatePermission($id,Request $request)
     {
         try {
             $permission = Permission::find($id);
             if (isset($permission)) {
-                $name = request()->name;
                 $permission = new Permission;
-                $permission->name = $name;
+                $permission->name = $request->name;
                 $permission->save();
                 return response([
                     'Permission' => $permission,

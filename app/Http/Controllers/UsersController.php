@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -41,7 +42,7 @@ class UsersController extends Controller
     public function getByIdUser($id)
     {
         try {
-            $user = User::find($id);
+            $user = User::findOrFail($id);
             if (isset($user)) {
                 return response([
                     'User' => $user,

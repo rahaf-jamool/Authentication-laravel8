@@ -124,19 +124,23 @@ class RolesController extends Controller
             ], 400);
         }
     }
-    public function updateRole($id)
+    public function updateRole($id,Request $request)
     {
         try {
-            $role = Role::find($id);
+            // $this->validate($request, [
+            //     'name' => 'required|string|unique:roles',
+            //     'permissions' => 'required'
+            // ]);
+            $role = Role::findOrFail($id);
             if (isset($role)) {
-                $name = request()->name;
-                $slug = request()->slug;
-                $isAdmin = request()->isAdmin;
-                $role = new Role;
-                $role->name = $name;
-                $role->slug = $slug;
-                $role->isAdmin = $isAdmin;
-                $role->save();
+                $role->name = $request->name;
+                if($request->has('permissions')){
+                    $rolePermissions = $role->getPermissionNames();
+                    foreach($rolePermissions as $permission){
+                        $role->revokePermissionTo($permission);
+                    }
+                    $role->givePermissionTo($request->permissions);
+                }
                 return response([
                     'Role' => $role,
                     'status' => true,
@@ -152,6 +156,7 @@ class RolesController extends Controller
                 ], 401);
             }
         } catch (\Exception $ex) {
+            return $ex->getMessage();
             return response([
                 'status' => false,
                 'stateNum' => 400,
