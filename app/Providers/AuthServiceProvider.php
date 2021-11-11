@@ -28,8 +28,8 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
         
-        Gate::define('update-post', function (User $user, Post $post) {
-            return $user->id === $post->user_id;
+        Gate::before(function (User $user, $ability) {
+            return $user->hasRole('admin') ? true : null;
         });
     }
 }

@@ -22,7 +22,7 @@ class AdminCheck
         if(!Auth::check()){
              return response()->json([
                  'msg' => 'You are not allowed to access this route'
-             ],402);
+             ],404);
         }
         // $user = Auth::user();
         // if($user->role->isAdmin == 0){

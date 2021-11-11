@@ -33,6 +33,7 @@ class PermissionController extends Controller
                 ], 401);
             }
         } catch (\Exception $ex) {
+            return $ex->getMessage();
             return response([
                 'status' => false,
                 'stateNum' => 400,

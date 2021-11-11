@@ -11,6 +11,7 @@ class RolesController extends Controller
     public function __construct(Role $role){
         // $this->middleware('auth');
         $this->role = $role;
+        $this->middleware(['role_or_permission:admin|create role']);
     }
     public function getAllRoles()
     {

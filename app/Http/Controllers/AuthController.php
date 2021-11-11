@@ -38,6 +38,7 @@ class AuthController extends Controller
                 'message' => 'done'
             ], 200);
         } catch (\Exception $ex) {
+            return $ex->getMessage();
             return response([
                 'status' => false,
                 'stateNum' => 400,
