@@ -46,14 +46,17 @@ Route::prefix('auth')->middleware([AdminCheck::class])->group(function () {
 });
 
 // if role admin
-Route::group(['middleware' => ['role:admin']],function(){
-    //roles
+// Route::prefix('auth')->middleware(['role:admin'])->group(function () {
+
+//     //roles
+    // Route::get('/roles/getAll', [RolesController::class, 'getAllRoles']);
+    // Route::get('/role/getById/{id}', [RolesController::class, 'getByIdRole']);
     // Route::post('/role/create', [RolesController::class, 'createRole']);
     // Route::put('/role/update/{id}', [RolesController::class, 'updateRole']);
-     //permissions
-//     Route::post('/permission/create', [PermissionController::class, 'createPermission']);
-//     Route::put('/permission/update/{id}', [PermissionController::class, 'updatePermission']);
-});
+//      //permissions
+    // Route::post('/permission/create', [PermissionController::class, 'createPermission']);
+    // Route::put('/permission/update/{id}', [PermissionController::class, 'updatePermission']);
+// });
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('user', [AuthController::class, 'user']);

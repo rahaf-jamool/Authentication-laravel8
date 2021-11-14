@@ -19,19 +19,12 @@ class AdminCheck
     {
         // \Log::info('inside middlware');
         return $next($request);
+        
         if(!Auth::check()){
              return response()->json([
                  'msg' => 'You are not allowed to access this route'
              ],404);
         }
-        // $user = Auth::user();
-        // if($user->role->isAdmin == 0){
-        //     return response()->json([
-        //         'msg' => 'You are not allowed to access this route'
-        //     ],402); 
-        // }
-
-        // return $this->checkForPermission($user,$request);
 
         
         return $next($request);

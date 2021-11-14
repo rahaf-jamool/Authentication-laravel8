@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
-use Spatie\Permission\Models\Permission;
+// use Spatie\Permission\Models\Permission;
 
 class RolesController extends Controller
 {
     public function __construct(Role $role){
-        // $this->middleware('auth');
         $this->role = $role;
-        $this->middleware(['role_or_permission:admin|create role']);
+        $this->middleware(['role:admin']);
     }
+
     public function getAllRoles()
     {
         try {
@@ -40,31 +40,6 @@ class RolesController extends Controller
                 'status' => false,
                 'stateNum' => 400,
                 'message' => 'Error! Roles doesnt exist yet'
-            ], 400);
-        }
-    }
-    public function assignRole(Request $request, $id)
-    {
-        $this->validate($request, [
-            'permission' => 'required',
-        ]);
-        try {
-            $role = Role::find($id);
-            $role->update([
-                'permission' => $request->permission,
-            ]);
-            return response([
-                'Role' => $role,
-                'status' => true,
-                'stateNum' => 200,
-                'message' => 'done'
-            ], 200);
-        } catch (\Exception $ex) {
-            return $ex->getLine();
-            return response([
-                'status' => false,
-                'stateNum' => 400,
-                'message' => 'Error! Permissin doesnt exist yet'
             ], 400);
         }
     }

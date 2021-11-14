@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Role;
 use Illuminate\Http\Request;
 use Illuminate\support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -76,6 +75,7 @@ class AuthController extends Controller
                 ], Response::HTTP_UNAUTHORIZED);
             }
         } catch (\Exception $ex) {
+            return $ex->getMessage();
             return response([
                 'status' => false,
                 'stateNum' => 400,
